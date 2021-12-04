@@ -124,7 +124,7 @@ def run_training(continue_run):
 
         # Build a Graph that computes predictions from the inference model.
         #? dont need activations for training
-        logits, ~ = model.inference(images_pl, exp_config, training=training_pl)
+        logits = model.inference(images_pl, exp_config, training=training_pl)[0]
 
         # Add to the Graph the Ops for loss calculation.
         [loss, _, weights_norm] = model.loss(logits,
