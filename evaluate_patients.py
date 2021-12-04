@@ -319,7 +319,7 @@ def score_data(input_folder, output_folder, model_path, exp_config, do_postproce
                         activations_file_name = os.path.join(output_folder, 'activations',
                                                 'patient' + patient_id + frame_suffix + '.npy')
                         logging.info('saving to: %s' % activations_file_name)
-                        np.save(activations_file_name, latent_activations.numpy())
+                        np.save(activations_file_name, latent_activations)
 
                         if gt_exists:
 
