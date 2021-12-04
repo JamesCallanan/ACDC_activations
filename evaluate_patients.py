@@ -36,7 +36,7 @@ def score_data(input_folder, output_folder, model_path, exp_config, do_postproce
 
     # According to the experiment config, pick a model and predict the output
     # TODO: Implement majority voting using 3 models.
-    mask_pl, softmax_pl = model.predict(images_pl, exp_config)
+    mask_pl, softmax_pl, latent_activations_pl = model.predict(images_pl, exp_config)
     saver = tf.train.Saver()
     init = tf.global_variables_initializer()
 
@@ -108,7 +108,7 @@ def score_data(input_folder, output_folder, model_path, exp_config, do_postproce
                                             pixel_size[1] / exp_config.target_resolution[1])
 
                             predictions = []
-
+                            #? iterating through layers of image (10 layers)
                             for zz in range(img.shape[2]):
 
                                 slice_img = np.squeeze(img[:,:,zz])
@@ -142,7 +142,8 @@ def score_data(input_folder, output_folder, model_path, exp_config, do_postproce
 
                                 # GET PREDICTION
                                 network_input = np.float32(np.tile(np.reshape(slice_cropped, (nx, ny, 1)), (batch_size, 1, 1, 1)))
-                                mask_out, logits_out = sess.run([mask_pl, softmax_pl], feed_dict={images_pl: network_input})
+                                #?
+                                mask_out, logits_out, latent_activations = sess.run([mask_pl, softmax_pl, latent_activations_pl], feed_dict={images_pl: network_input})
                                 prediction_cropped = np.squeeze(logits_out[0,...])
 
                                 # ASSEMBLE BACK THE SLICES
@@ -243,7 +244,8 @@ def score_data(input_folder, output_folder, model_path, exp_config, do_postproce
                             network_input = np.float32(np.reshape(slice_vol, (1, nx, ny, nz_max, 1)))
 
                             start_time = time.time()
-                            mask_out, logits_out = sess.run([mask_pl, softmax_pl], feed_dict={images_pl: network_input})
+                            #?
+                            mask_out, logits_out, latent_activations = sess.run([mask_pl, softmax_pl, latent_activations_pl], feed_dict={images_pl: network_input})
 
                             logging.info('Classified 3D: %f secs' % (time.time() - start_time))
 
@@ -293,7 +295,7 @@ def score_data(input_folder, output_folder, model_path, exp_config, do_postproce
                         else:
                             raise ValueError('Frame doesnt correspond to ED or ES. frame = %d, ED = %d, ES = %d' %
                                              (frame, ED_frame, ES_frame))
-
+                        #?
                         # Save prediced mask
                         out_file_name = os.path.join(output_folder, 'prediction',
                                                      'patient' + patient_id + frame_suffix + '.nii.gz')
@@ -306,12 +308,18 @@ def score_data(input_folder, output_folder, model_path, exp_config, do_postproce
 
                         logging.info('saving to: %s' % out_file_name)
                         utils.save_nii(out_file_name, prediction_arr, out_affine, out_header)
-
+                        #?
                         # Save image data to the same folder for convenience
                         image_file_name = os.path.join(output_folder, 'image',
                                                 'patient' + patient_id + frame_suffix + '.nii.gz')
                         logging.info('saving to: %s' % image_file_name)
                         utils.save_nii(image_file_name, img_dat[0], out_affine, out_header)
+                        #?#?
+                        # Save activations
+                        activations_file_name = os.path.join(output_folder, 'activations',
+                                                'patient' + patient_id + frame_suffix + '.npy')
+                        logging.info('saving to: %s' % activations_file_name)
+                        np.save(activations_file_name, latent_activations.numpy())
 
                         if gt_exists:
 
@@ -377,9 +385,14 @@ if __name__ == '__main__':
 
     path_pred = os.path.join(output_path, 'prediction')
     path_image = os.path.join(output_path, 'image')
+    #? Don't think this is necessary
+    path_activations = os.path.join(output_path, 'activations')
     utils.makefolder(path_pred)
     utils.makefolder(path_image)
+    #? Don't think this is necessary
+    utils.makefolder(path_activations)
 
+    #?For now I'm evaluating on test set
     if not evaluate_test_set:
         path_gt = os.path.join(output_path, 'ground_truth')
         path_diff = os.path.join(output_path, 'difference')
@@ -388,7 +401,7 @@ if __name__ == '__main__':
         utils.makefolder(path_diff)
         utils.makefolder(path_gt)
 
-
+    #? Need to check out!
     init_iteration = score_data(input_path,
                                 output_path,
                                 model_path,
@@ -398,7 +411,7 @@ if __name__ == '__main__':
                                 evaluate_all=evaluate_all,
                                 use_iter=use_iter)
 
-
+    #?For now I'm evaluating on test set
     if not evaluate_test_set:
         metrics_acdc.main(path_gt, path_pred, path_eval)
 

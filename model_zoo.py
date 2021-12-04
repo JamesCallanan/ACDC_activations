@@ -383,11 +383,11 @@ def unet2D_bn_modified(images, training, nlabels):
     conv4_2 = layers.conv2D_layer_bn(conv4_1, 'conv4_2', num_filters=512, training=training, padding='VALID')
 
     pool4 = layers.max_pool_layer2d(conv4_2)
-
+    #?
     conv5_1 = layers.conv2D_layer_bn(pool4, 'conv5_1', num_filters=1024, training=training, padding='VALID')
     conv5_2 = layers.conv2D_layer_bn(conv5_1, 'conv5_2', num_filters=1024, training=training, padding='VALID')
-
     upconv4 = layers.deconv2D_layer_bn(conv5_2, name='upconv4', kernel_size=(4, 4), strides=(2, 2), num_filters=nlabels, training=training)
+    #?
     concat4 = layers.crop_and_concat_layer([upconv4, conv4_2], axis=3)
 
     conv6_1 = layers.conv2D_layer_bn(concat4, 'conv6_1', num_filters=512, training=training, padding='VALID')
@@ -413,8 +413,8 @@ def unet2D_bn_modified(images, training, nlabels):
     conv9_2 = layers.conv2D_layer_bn(conv9_1, 'conv9_2', num_filters=64, training=training, padding='VALID')
 
     pred = layers.conv2D_layer_bn(conv9_2, 'pred', num_filters=nlabels, kernel_size=(1,1), activation=tf.identity, training=training, padding='VALID')
-
-    return pred
+    #?
+    return pred, conv5_2
 
 def unet2D_bn(images, training, nlabels):
 

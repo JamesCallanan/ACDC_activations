@@ -12,7 +12,7 @@ def inference(images, exp_config, training):
     '''
     Wrapper function to provide an interface to a model from the model_zoo inside of the model module. 
     '''
-
+    #?
     return exp_config.model_handle(images, training, nlabels=exp_config.nlabels)
 
 
@@ -65,12 +65,12 @@ def predict(images, exp_config):
     :param inference_handle: A model function from the model zoo
     :return: A prediction mask, and the corresponding softmax output
     '''
-
-    logits = exp_config.model_handle(images, training=tf.constant(False, dtype=tf.bool), nlabels=exp_config.nlabels)
+    #?
+    logits, latent_activations = exp_config.model_handle(images, training=tf.constant(False, dtype=tf.bool), nlabels=exp_config.nlabels)
     softmax = tf.nn.softmax(logits)
     mask = tf.arg_max(softmax, dimension=-1)
-
-    return mask, softmax
+    #?
+    return mask, softmax, latent_activations
 
 
 def training_step(loss, optimizer_handle, learning_rate, **kwargs):

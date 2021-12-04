@@ -123,7 +123,8 @@ def run_training(continue_run):
         tf.summary.scalar('learning_rate', learning_rate_pl)
 
         # Build a Graph that computes predictions from the inference model.
-        logits = model.inference(images_pl, exp_config, training=training_pl)
+        #? dont need activations for training
+        logits, ~ = model.inference(images_pl, exp_config, training=training_pl)
 
         # Add to the Graph the Ops for loss calculation.
         [loss, _, weights_norm] = model.loss(logits,
