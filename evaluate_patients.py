@@ -90,6 +90,7 @@ def score_data(input_folder, output_folder, model_path, exp_config, do_postproce
                         file_base = file.split('.nii.gz')[0]
 
                         frame = int(file_base.split('frame')[-1])
+                        #?
                         img_dat = utils.load_nii(file)
                         img = img_dat[0].copy()
                         img = image_utils.normalise_image(img)
@@ -385,11 +386,11 @@ if __name__ == '__main__':
 
     path_pred = os.path.join(output_path, 'prediction')
     path_image = os.path.join(output_path, 'image')
-    #? Don't think this is necessary
+    #? Make folders to save outputs to in score_data
     path_activations = os.path.join(output_path, 'activations')
     utils.makefolder(path_pred)
     utils.makefolder(path_image)
-    #? Don't think this is necessary
+    #? Make folders to save outputs to in score_data
     utils.makefolder(path_activations)
 
     #?For now I'm evaluating on test set
