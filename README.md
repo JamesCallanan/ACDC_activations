@@ -1,3 +1,15 @@
+Notes to myself
+
+To train model -> run train.py
+
+What does this do? schedule_gradient_threshold in 
+# When the gradient of the learning curve is smaller than this value the LR will
+                                       # be reduced
+
+Is this the histogram normalisation in acdc_data.py                             
+#? Normalisation
+
+Check image_utils.py
 
 
 This repository contains code to train state-of-the-art cardiac segmentation networks as described in this

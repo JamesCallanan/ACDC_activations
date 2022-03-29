@@ -179,6 +179,7 @@ def prepare_data(input_folder, output_file, mode, size, target_resolution, split
             img = img_dat[0].copy()
             mask = mask_dat[0].copy()
 
+            #? Normalisation
             img = image_utils.normalise_image(img)
 
             pixel_size = (img_dat[2].structarr['pixdim'][1],
@@ -195,6 +196,7 @@ def prepare_data(input_folder, output_file, mode, size, target_resolution, split
                                 pixel_size[1] / target_resolution[1],
                                 pixel_size[2]/ target_resolution[2]]
 
+                #? ß
                 img_scaled = transform.rescale(img,
                                                scale_vector,
                                                order=1,

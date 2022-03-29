@@ -518,6 +518,8 @@ def unet3D_bn(images, training, nlabels):
 
     return pred
 
+    
+
 
 
 def unet3D_bn_modified(images, training, nlabels):
